@@ -1,0 +1,41 @@
+version: "3"
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - AOC_PORT=3000
+      - AOC_DB__URL=postgres://aoc:sandcastle@postgres:5432
+      - AOC_REDIS__URL=redis://redis:6379
+    profiles:
+      - full
+    depends_on:
+      - postgres
+      - redis
+    ports:
+      - "3000:3000"
+
+  postgres:
+    image: bitnami/postgresql:14.10.0
+    environment:
+      - POSTGRESQL_USERNAME=aoc
+      - POSTGRESQL_PASSWORD=sandcastle
+      - POSTGRESQL_DATABASE=aoc
+      - POSTGRESQL_POSTGRES_PASSWORD=postgres
+    profiles:
+      - full
+      - dev
+    expose:
+      - "5432"
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:alpine
+    profiles:
+      - full
+      - dev
+    expose:
+      - "6379"
