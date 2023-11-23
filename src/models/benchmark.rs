@@ -4,7 +4,10 @@ use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
 use strum::{EnumIter, IntoEnumIterator};
 
-use super::{base::DbBmc, Error, ModelManager, Result};
+use super::{
+    base::{bmc_list, DbBmc},
+    Error, ModelManager, Result,
+};
 
 #[derive(Debug, Default, Clone, PartialEq, PartialOrd, FromRow, Serialize)]
 #[cfg_attr(test, derive(Deserialize))]
@@ -31,7 +34,7 @@ pub struct Benchmark {
 // this sucks, but we have to wait for a newer version of sea-query to allow
 // more control over the struct proc macro
 #[derive(Debug, Clone, Copy, Iden, EnumIter)]
-enum BenchmarkIden {
+pub enum BenchmarkIden {
     #[iden = "benchmarks"]
     Table,
     Id,
@@ -57,6 +60,11 @@ pub struct BenchmarkBmc;
 
 impl DbBmc for BenchmarkBmc {
     const TABLE: &'static str = "benchmarks";
+    type Iden = BenchmarkIden;
+
+    fn table_iden() -> Self::Iden {
+        Self::Iden::Table
+    }
 }
 
 impl BenchmarkBmc {
@@ -82,6 +90,10 @@ impl BenchmarkBmc {
                 .filter(|c| !matches!(c, BenchmarkIden::Table | BenchmarkIden::Id)),
         );
 
+        // clunky, but since we don't know the length of the iterator ahead of
+        // time and do not want to alloc to consume it
+        let mut count = 0;
+
         for benchmark_data in data {
             query.values_panic([
                 benchmark_data.year.into(),
@@ -97,6 +109,11 @@ impl BenchmarkBmc {
                 benchmark_data.min.into(),
                 benchmark_data.max.into(),
             ]);
+            count += 1;
+        }
+
+        if count == 0 {
+            return Err(Error::EmptyBatch("benchmarks"));
         }
 
         let (sql, values) = query.build_sqlx(PostgresQueryBuilder);
@@ -121,27 +138,8 @@ RETURNING id"#;
         Ok(ids.into_iter().map(|i| i.0).collect())
     }
 
-    pub async fn list(
-        mm: &ModelManager,
-        filters: Option<BenchmarkFilter>,
-    ) -> Result<Vec<Benchmark>> {
-        let db = mm.db();
-
-        let mut query = Query::select();
-
-        query
-            .columns(BenchmarkIden::iter())
-            .from(BenchmarkIden::Table);
-
-        if let Some(filters) = filters {
-            query.cond_where(Cond::from(filters));
-        }
-
-        let (sql, values) = query.build_sqlx(PostgresQueryBuilder);
-
-        let entities = sqlx::query_as_with(&sql, values).fetch_all(db).await?;
-
-        Ok(entities)
+    pub async fn list(mm: &ModelManager, filter: BenchmarkFilter) -> Result<Vec<Benchmark>> {
+        bmc_list::<Self, _, _>(mm, filter).await
     }
 
     pub async fn get(mm: &ModelManager, id: i32) -> Result<Benchmark> {
@@ -306,7 +304,7 @@ mod tests {
         // conflict
         assert_eq!(ids, vec![1000, 1002]);
 
-        let all = BenchmarkBmc::list(&mm, None).await?;
+        let all = BenchmarkBmc::list(&mm, BenchmarkFilter::default()).await?;
 
         assert_eq!(all.len(), 2);
 
@@ -318,10 +316,23 @@ mod tests {
         Ok(())
     }
 
+    #[sqlx::test]
+    async fn test_batch_create_empty_is_err(pool: PgPool) -> anyhow::Result<()> {
+        let mm = ModelManager::from(pool);
+
+        let data = Vec::new();
+
+        let res = BenchmarkBmc::batch_create_or_update(&mm, data).await;
+
+        assert!(matches!(res, Err(Error::EmptyBatch("benchmarks"))));
+
+        Ok(())
+    }
+
     #[sqlx::test(fixtures("../../fixtures/benchmarks.sql"))]
     async fn test_list_all_ok(pool: PgPool) -> anyhow::Result<()> {
         let mm = ModelManager::from(pool);
-        let b = BenchmarkBmc::list(&mm, None).await?;
+        let b = BenchmarkBmc::list(&mm, BenchmarkFilter::default()).await?;
         // how to make this more general
         assert_eq!(b.len(), 4);
         Ok(())
@@ -330,7 +341,7 @@ mod tests {
     #[sqlx::test]
     async fn test_list_all_empty_ok(pool: PgPool) -> anyhow::Result<()> {
         let mm = ModelManager::from(pool);
-        let b = BenchmarkBmc::list(&mm, None).await?;
+        let b = BenchmarkBmc::list(&mm, BenchmarkFilter::default()).await?;
         // how to make this more general
         assert_eq!(b, vec![]);
         Ok(())
@@ -340,17 +351,13 @@ mod tests {
     async fn test_list_filter_ok(pool: PgPool) -> anyhow::Result<()> {
         let mm = ModelManager::from(pool);
 
-        // allow empty filter in case we actually make one
-        let b = BenchmarkBmc::list(&mm, Some(BenchmarkFilter::default())).await?;
-        assert_eq!(b.len(), 4);
-
         // filter out some things
         let b = BenchmarkBmc::list(
             &mm,
-            Some(BenchmarkFilter {
+            BenchmarkFilter {
                 input: Some("input-bar".to_string()),
                 ..Default::default()
-            }),
+            },
         )
         .await?;
         assert_eq!(b.len(), 2);

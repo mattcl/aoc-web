@@ -7,8 +7,14 @@ pub enum Error {
     #[error("{table} not found: {id}")]
     EntityNotFound { table: &'static str, id: i32 },
 
+    #[error("Day out of range: {0}")]
+    DayOutOfRange(i32),
+
+    #[error("Empty batch for {0}")]
+    EmptyBatch(&'static str),
+
     #[error(transparent)]
-    StoreError(#[from] store::Error),
+    Store(#[from] store::Error),
 
     #[error(transparent)]
     Sqlx(#[from] sqlx::Error),

@@ -1,6 +1,7 @@
 mod cli;
 mod config;
 mod error;
+mod middleware;
 mod models;
 mod routes;
 mod server;

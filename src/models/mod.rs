@@ -2,9 +2,11 @@ mod base;
 mod benchmark;
 mod error;
 mod store;
+mod summary;
 
 pub use self::benchmark::{Benchmark, BenchmarkBmc, BenchmarkCreate, BenchmarkFilter};
 pub use self::error::{Error, Result};
+pub use self::summary::{Summary, SummaryBmc, SummaryFilter};
 
 // do not expose above the model layer
 use self::store::{new_db_pool, Db};

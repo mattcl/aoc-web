@@ -9,6 +9,7 @@ services:
       - AOC_PORT=3000
       - AOC_DB__URL=postgres://aoc:sandcastle@postgres:5432
       - AOC_REDIS__URL=redis://redis:6379
+      - AOC_SECRET__API_TOKEN=$$argon2id$$v=19$$m=19,t=2,p=1$$cnBVTU1hTnA3SWppYk56bQ$$h9WU9gybGvxV6TUA46S96w
     profiles:
       - full
     depends_on:

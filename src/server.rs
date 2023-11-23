@@ -7,6 +7,7 @@ pub struct AppState {
     mm: ModelManager,
 }
 
+#[cfg(test)]
 impl AppState {
     pub fn new(mm: ModelManager) -> Self {
         Self { mm }

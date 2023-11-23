@@ -1,5 +1,18 @@
 INSERT INTO benchmarks
-(year, day, participant, input, language, mean, stddev, median, tuser, tsystem, tmin, tmax)
+(
+    year,
+    day,
+    participant,
+    input,
+    language,
+    mean,
+    stddev,
+    median,
+    tuser,
+    tsystem,
+    tmin,
+    tmax
+)
 VALUES
 (
     2023,
