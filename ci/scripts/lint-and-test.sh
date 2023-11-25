@@ -20,17 +20,27 @@ if [ -f /sbin/apk ]; then
 
     mkdir /run/postgresql
     chown postgres:postgres /run/postgresql
+    mkdir /var/lib/postgresql/data/
+    chown postgres:postgres /var/lib/postgresql/data/
+    touch var/lib/postgresql/.psql_history
+    chown postgres:postgres /var/lib/postgresql/data/.psql_history
+    chmod 0700 /var/lib/postgresql/data/
+
+    su postgres -c 'initdb -D /var/lib/postgresql/data'
+    echo "host all postgres localhost trust" >> /var/lib/postgresql/data/pg_hba.conf
+    su postgres -c 'pg_ctl start -D /var/lib/postgresql/data'
 else
     apt-get update
     apt-get install -y postgresql
+
+    # permit all
+    set -- /etc/postgresql/*/main/pg_hba.conf
+    cat > "$1" <<-EOF
+    host   all   postgres   localhost   trust
+
+    EOF
 fi
 
-# permit all
-set -- /etc/postgresql/*/main/pg_hba.conf
-cat > "$1" <<-EOF
-host   all   postgres   localhost   trust
-
-EOF
 service postgresql restart
 
 psql -h localhost -U postgres -c 'create database aoc;'

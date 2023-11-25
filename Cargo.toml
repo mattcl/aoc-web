@@ -13,7 +13,6 @@ axum = { version = "0.6", features = ["headers", "macros"] }
 clap = { version = "4.3", features = ["cargo", "derive", "env"] }
 figment = { version = "0.10.10", features = ["env", "toml"] }
 password-hash = { version = "0.5.0", features = ["alloc"] }
-redis = { version = "0.23.0", features = ["tokio-comp"] }
 sea-query = { version = "0.30.2", features = ["derive", "attr"] }
 sea-query-binder = { version = "0.5", features = ["sqlx-postgres", "with-uuid"] }
 serde = { version = "1.0.166", features = ["derive"] }
