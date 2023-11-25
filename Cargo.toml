@@ -23,7 +23,7 @@ strum = { version = "0.25", features = ["derive"] }
 thiserror = "1.0.31"
 tokio = { version = "1.25", features = ["full"] }
 tower-http = { version = "0.4", features = ["cors", "trace"] }
-tracing = { version = "0.1.21", features = ["attributes"] }
+tracing = { version = "0.1.37", features = ["attributes"] }
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 url = { version = "2.4", features = ["serde"] }
 uuid = { version = "1.5", features = ["serde"] }
