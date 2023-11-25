@@ -35,9 +35,9 @@ else
     # permit all
     hba=$(find /etc/postgresql -name 'pg_hba.conf')
     cat "host all postgres localhost trust" >> "$hba"
+    service postgresql restart
 fi
 
-service postgresql restart
 
 psql -h localhost -U postgres -c 'create database aoc;'
 
