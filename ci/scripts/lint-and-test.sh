@@ -27,6 +27,7 @@ if [ -f /sbin/apk ]; then
     chmod 0700 /var/lib/postgresql/data/
 
     su postgres -c 'initdb -D /var/lib/postgresql/data'
+    # permit all
     echo "host all postgres localhost trust" >> /var/lib/postgresql/data/pg_hba.conf
     su postgres -c 'pg_ctl start -D /var/lib/postgresql/data'
 else
@@ -34,11 +35,10 @@ else
     apt-get install -y postgresql
 
     # permit all
-    set -- /etc/postgresql/*/main/pg_hba.conf
-    cat > "$1" <<-EOF
-    host   all   postgres   localhost   trust
-
-    EOF
+    hba=$(find /etc/postgresql -name 'pg_hba.conf')
+    cat > "$hba" <<-EOF
+host   all   postgres   localhost   trust
+EOF
 fi
 
 service postgresql restart
