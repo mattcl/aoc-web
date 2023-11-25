@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 set -ex
 
 if [ "$LINT" -eq 1 ]; then
@@ -26,7 +26,8 @@ else
 fi
 
 # permit all
-cat > /etc/postgresql/*/main/pg_hba.conf <<-EOF
+set -- /etc/postgresql/*/main/pg_hba.conf
+cat > "$1" <<-EOF
 host   all   postgres   localhost   trust
 
 EOF
