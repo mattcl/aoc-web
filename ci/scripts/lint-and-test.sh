@@ -34,7 +34,7 @@ else
 
     # permit all
     hba=$(find /etc/postgresql -name 'pg_hba.conf')
-    cat "host all postgres localhost trust" >> "$hba"
+    echo "host all postgres localhost trust" >> "$hba"
     service postgresql restart
 fi
 
