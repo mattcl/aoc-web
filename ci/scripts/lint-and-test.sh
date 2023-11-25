@@ -32,9 +32,9 @@ host   all   postgres   localhost   trust
 EOF
 service postgresql restart
 
-psql -h localhost -U postgres -c 'create database aoc-web;'
+psql -h localhost -U postgres -c 'create database aoc;'
 
-export DATABASE_URL="postgres://postgres@localhost/aoc-web"
+export DATABASE_URL="postgres://postgres@localhost/aoc"
 
 # ensure tests pass
 cargo test --verbose ${EXTRA_CARGO_TEST_FLAGS}

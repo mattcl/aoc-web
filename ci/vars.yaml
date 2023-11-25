@@ -6,10 +6,10 @@ service:
   image-repo-api: https://hub.docker.com/v2/repositories/mattcl/aoc-web
 
 lint-and-test:
-  script-path: ci/scripts/lint-and-test.sh
+  script-path: ./ci/scripts/lint-and-test.sh
 
 msrv:
-  script-path: ci/scripts/check-msrv.sh
+  script-path: ./ci/scripts/check-msrv.sh
 
 gitops:
   repo:
