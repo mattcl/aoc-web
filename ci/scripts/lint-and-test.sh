@@ -26,7 +26,7 @@ if [ -f /sbin/apk ]; then
 
     su postgres -c 'initdb -D /var/lib/postgresql/data'
     # permit all
-    echo "host all postgres localhost trust" >> /var/lib/postgresql/data/pg_hba.conf
+    echo "host all postgres localhost trust" > /var/lib/postgresql/data/pg_hba.conf
     su postgres -c 'pg_ctl start -D /var/lib/postgresql/data'
 else
     apt-get update
@@ -34,7 +34,7 @@ else
 
     # permit all
     hba=$(find /etc/postgresql -name 'pg_hba.conf')
-    echo "host all postgres localhost trust" >> "$hba"
+    echo "host all postgres localhost trust" > "$hba"
     service postgresql restart
 fi
 
@@ -45,3 +45,7 @@ export DATABASE_URL="postgres://postgres@localhost/aoc"
 
 # ensure tests pass
 cargo test --verbose ${EXTRA_CARGO_TEST_FLAGS}
+
+if [ -f /sbin/apk ]; then
+    su postgres -c 'pg_ctl stop -D /var/lib/postgresql/data -m immediate'
+fi
