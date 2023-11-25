@@ -20,5 +20,8 @@ pub enum Error {
     Sqlx(#[from] sqlx::Error),
 
     #[error(transparent)]
+    SqlxMigrate(#[from] sqlx::migrate::MigrateError),
+
+    #[error(transparent)]
     Unhandled(#[from] anyhow::Error),
 }

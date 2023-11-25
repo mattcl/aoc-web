@@ -30,6 +30,14 @@ impl ModelManager {
         Ok(())
     }
 
+    /// This is probably the wrong place for this, but we don't allow the db
+    /// pool to leak beyond the manager.
+    pub async fn migrate(&self) -> Result<()> {
+        sqlx::migrate!().run(self.db()).await?;
+
+        Ok(())
+    }
+
     pub(in crate::models) fn db(&self) -> &Db {
         &self.db
     }

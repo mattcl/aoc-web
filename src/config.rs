@@ -26,9 +26,6 @@ pub fn config() -> &'static Config {
                     .try_into()
                     .unwrap(),
             },
-            redis: Redis {
-                url: "redis://otherredis:1234".try_into().unwrap(),
-            },
             secret: Secret {
                 api_token: HashWrapper(
                     PasswordHashString::new(
@@ -64,7 +61,6 @@ pub struct Config {
     pub bind_addr: Ipv4Addr,
 
     pub db: Db,
-    pub redis: Redis,
     pub secret: Secret,
 }
 
@@ -106,17 +102,6 @@ impl Db {
 impl Debug for Db {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_struct("Db").field("url", &"*******").finish()
-    }
-}
-
-#[derive(Clone, PartialEq, Eq, Deserialize)]
-pub struct Redis {
-    pub url: Url,
-}
-
-impl Debug for Redis {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.debug_struct("Redis").field("url", &"*******").finish()
     }
 }
 
@@ -198,9 +183,6 @@ mod tests {
                 max_connections: 4,
                 url: "postgres://aoc:fake@localhost/aoc".try_into().unwrap(),
             },
-            redis: Redis {
-                url: "redis://otherredis:1234".try_into().unwrap(),
-            },
             secret: Secret {
                 api_token: HashWrapper(
                     PasswordHashString::new(
@@ -217,7 +199,6 @@ mod tests {
                 ("AOC_BIND_ADDR", Some("10.10.10.15")),
                 ("AOC_DB__MAX_CONNECTIONS", Some("4")),
                 ("AOC_DB__URL", Some("postgres://aoc:fake@localhost/aoc")),
-                ("AOC_REDIS__URL", Some("redis://otherredis:1234")),
                 (
                     "AOC_SECRET__API_TOKEN",
                     Some(
@@ -239,9 +220,6 @@ mod tests {
             db: Db {
                 max_connections: 10,
                 url: "postgres://aoc:fake@localhost/aoc".try_into().unwrap(),
-            },
-            redis: Redis {
-                url: "redis://otherredis:1234".try_into().unwrap(),
             },
             secret: Secret {
                 api_token: HashWrapper(

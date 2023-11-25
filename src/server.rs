@@ -1,5 +1,6 @@
 use crate::{config, models::ModelManager, routes};
-use axum::{extract::FromRef, Router};
+use axum::{extract::FromRef, http::Method, Router};
+use tower_http::cors::{Any, CorsLayer};
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
 #[derive(Debug, Clone, FromRef)]
@@ -23,15 +24,18 @@ pub async fn serve() -> anyhow::Result<()> {
         .with(tracing_subscriber::fmt::layer())
         .init();
 
-    let socket_addr = config().socket_addr();
-
-    tracing::debug!("listening on {}", &socket_addr);
-
     let state = AppState {
         mm: ModelManager::new().await?,
     };
 
-    tracing::debug!("initialized app state");
+    tracing::info!("initialized app state");
+
+    // attempt to apply migrations
+    tracing::info!("applying migrations");
+    state.mm.migrate().await?;
+
+    let socket_addr = config().socket_addr();
+    tracing::info!("listening on {}", &socket_addr);
 
     axum::Server::bind(&socket_addr)
         .serve(service(state).into_make_service())
@@ -43,5 +47,9 @@ pub async fn serve() -> anyhow::Result<()> {
 // separated to allow testing without the server, and not allow for not reaching
 // into the router module directly by an extenal caller
 pub fn service(state: AppState) -> Router {
-    routes::router(state)
+    let cors = CorsLayer::new()
+        .allow_methods([Method::GET, Method::POST])
+        .allow_origin(Any);
+
+    routes::router(state).layer(cors)
 }

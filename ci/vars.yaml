@@ -1,0 +1,17 @@
+service:
+  name: aoc-web
+  repo:
+    uri: https://github.com/mattcl/aoc-web.git
+  image-repo: mattcl/aoc-web
+  image-repo-api: https://hub.docker.com/v2/repositories/mattcl/aoc-web
+
+lint-and-test:
+  script-path: ci/scripts/lint-and-test.sh
+
+msrv:
+  script-path: ci/scripts/check-msrv.sh
+
+gitops:
+  repo:
+    uri: git@github.com:mattcl/hl-aoc-web
+  overlay: installs/default
