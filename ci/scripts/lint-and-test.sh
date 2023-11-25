@@ -22,8 +22,6 @@ if [ -f /sbin/apk ]; then
     chown postgres:postgres /run/postgresql
     mkdir /var/lib/postgresql/data/
     chown postgres:postgres /var/lib/postgresql/data/
-    touch var/lib/postgresql/.psql_history
-    chown postgres:postgres /var/lib/postgresql/data/.psql_history
     chmod 0700 /var/lib/postgresql/data/
 
     su postgres -c 'initdb -D /var/lib/postgresql/data'
