@@ -28,10 +28,11 @@ fi
 # permit all
 cat > /etc/postgresql/*/main/pg_hba.conf <<-EOF
 host   all   postgres   localhost   trust
+
 EOF
 service postgresql restart
 
-psql -U postgres -c 'create database aoc-web;'
+psql -h localhost -U postgres -c 'create database aoc-web;'
 
 export DATABASE_URL="postgres://postgres@localhost/aoc-web"
 
