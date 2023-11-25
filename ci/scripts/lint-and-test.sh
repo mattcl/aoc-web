@@ -22,7 +22,7 @@ if [ -f /sbin/apk ]; then
     chown postgres:postgres /run/postgresql
 else
     apt-get update
-    apt-get install postgresql
+    apt-get install -y postgresql
 fi
 
 # permit all
