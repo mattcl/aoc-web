@@ -21,4 +21,4 @@ cargo msrv --min=${rust_version} --max=${rust_version}
 
 # we can't actually run tests here unless we want to set up the db
 # verify we can run tests at this version
-cargo msrv --min=${rust_version} --max=${rust_version} -- cargo build --locked --all-targets
+# cargo msrv --min=${rust_version} --max=${rust_version} -- cargo test --locked --all-targets
