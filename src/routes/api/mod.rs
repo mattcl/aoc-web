@@ -3,6 +3,7 @@ use axum::Router;
 use crate::server::AppState;
 
 mod benchmarks;
+mod participants;
 mod summaries;
 
 pub fn routes(state: AppState) -> Router {
@@ -12,5 +13,6 @@ pub fn routes(state: AppState) -> Router {
 fn v1(state: AppState) -> Router {
     Router::new()
         .nest("/benchmarks", benchmarks::routes(state.clone()))
+        .nest("/participants", participants::routes(state.clone()))
         .nest("/summaries", summaries::routes(state.clone()))
 }
