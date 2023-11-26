@@ -1,0 +1,21 @@
+INSERT INTO participants (year, name, language, repo)
+VALUES
+(
+    2023,
+    'foo',
+    'ruby',
+    'https://foobar/foo2'
+),
+(
+    2022,
+    'foo',
+    'rust',
+    'https://foobar/foo'
+),
+(
+    2023,
+    'bar',
+    'python',
+    'https://foobar/bar'
+)
+;
