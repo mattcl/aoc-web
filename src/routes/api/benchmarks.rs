@@ -62,7 +62,7 @@ async fn get_benchmark(
 mod tests {
     use super::*;
     use axum::{
-        body::Body,
+        body::{to_bytes, Body},
         http::{self, Request, StatusCode},
     };
     use std::f64::EPSILON;
@@ -120,8 +120,8 @@ mod tests {
 
         assert_eq!(response.status(), StatusCode::OK);
 
-        let body = hyper::body::to_bytes(response.into_body()).await?;
-        let body: Vec<i32> = serde_json::from_slice(&body)?;
+        let raw_body = to_bytes(response.into_body(), usize::MAX).await?;
+        let body: Vec<i32> = serde_json::from_slice(&raw_body)?;
         assert_eq!(body.len(), 1);
         assert_eq!(body, vec![1000]);
 
@@ -133,8 +133,8 @@ mod tests {
 
         assert_eq!(response.status(), StatusCode::OK);
 
-        let body = hyper::body::to_bytes(response.into_body()).await?;
-        let body: Benchmark = serde_json::from_slice(&body)?;
+        let raw_body = to_bytes(response.into_body(), usize::MAX).await?;
+        let body: Benchmark = serde_json::from_slice(&raw_body)?;
         assert_benchmarks_equal!(body, create_args);
 
         Ok(())
@@ -190,8 +190,8 @@ mod tests {
 
         assert_eq!(response.status(), StatusCode::OK);
 
-        let body = hyper::body::to_bytes(response.into_body()).await?;
-        let body: Vec<i32> = serde_json::from_slice(&body)?;
+        let raw_body = to_bytes(response.into_body(), usize::MAX).await?;
+        let body: Vec<i32> = serde_json::from_slice(&raw_body)?;
         assert_eq!(body.len(), 2);
         assert_eq!(body, vec![1000, 1001]);
 
@@ -203,8 +203,8 @@ mod tests {
 
         assert_eq!(response.status(), StatusCode::OK);
 
-        let body = hyper::body::to_bytes(response.into_body()).await?;
-        let body: Vec<Benchmark> = serde_json::from_slice(&body)?;
+        let raw_body = to_bytes(response.into_body(), usize::MAX).await?;
+        let body: Vec<Benchmark> = serde_json::from_slice(&raw_body)?;
         assert_benchmarks_equal!(body[0], create_args[0]);
         assert_benchmarks_equal!(body[1], create_args[1]);
 
@@ -290,8 +290,8 @@ mod tests {
 
         assert_eq!(response.status(), StatusCode::OK);
 
-        let body = hyper::body::to_bytes(response.into_body()).await?;
-        let body: Vec<Benchmark> = serde_json::from_slice(&body)?;
+        let raw_body = to_bytes(response.into_body(), usize::MAX).await?;
+        let body: Vec<Benchmark> = serde_json::from_slice(&raw_body)?;
         // idk if there's a better way to test that we get what we want
         assert_eq!(body.len(), 4);
 
@@ -309,8 +309,8 @@ mod tests {
 
         assert_eq!(response.status(), StatusCode::OK);
 
-        let body = hyper::body::to_bytes(response.into_body()).await?;
-        let body: Vec<Benchmark> = serde_json::from_slice(&body)?;
+        let raw_body = to_bytes(response.into_body(), usize::MAX).await?;
+        let body: Vec<Benchmark> = serde_json::from_slice(&raw_body)?;
         // idk if there's a better way to test that we get what we want
         assert!(body.is_empty());
 
@@ -333,8 +333,8 @@ mod tests {
 
         assert_eq!(response.status(), StatusCode::OK);
 
-        let body = hyper::body::to_bytes(response.into_body()).await?;
-        let body: Vec<Benchmark> = serde_json::from_slice(&body)?;
+        let raw_body = to_bytes(response.into_body(), usize::MAX).await?;
+        let body: Vec<Benchmark> = serde_json::from_slice(&raw_body)?;
         // idk if there's a better way to test that we get what we want
         assert_eq!(body.len(), 1);
 
@@ -352,8 +352,8 @@ mod tests {
 
         assert_eq!(response.status(), StatusCode::OK);
 
-        let body = hyper::body::to_bytes(response.into_body()).await?;
-        let body: Benchmark = serde_json::from_slice(&body)?;
+        let raw_body = to_bytes(response.into_body(), usize::MAX).await?;
+        let body: Benchmark = serde_json::from_slice(&raw_body)?;
         // idk if there's a better way to test this
         assert_eq!(body.id, 1001);
 

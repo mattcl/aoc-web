@@ -59,7 +59,7 @@ async fn get_participant(
 #[cfg(test)]
 mod tests {
     use axum::{
-        body::Body,
+        body::{to_bytes, Body},
         http::{self, Request, StatusCode},
     };
     use tower::ServiceExt;
@@ -93,8 +93,8 @@ mod tests {
 
         assert_eq!(response.status(), StatusCode::OK);
 
-        let body = hyper::body::to_bytes(response.into_body()).await?;
-        let body: Vec<(i32, String)> = serde_json::from_slice(&body)?;
+        let raw_body = to_bytes(response.into_body(), usize::MAX).await?;
+        let body: Vec<(i32, String)> = serde_json::from_slice(&raw_body)?;
         assert_eq!(body.len(), 1);
         assert_eq!(body, vec![(2023, "herp".to_string())]);
 
@@ -111,8 +111,8 @@ mod tests {
 
         assert_eq!(response.status(), StatusCode::OK);
 
-        let body = hyper::body::to_bytes(response.into_body()).await?;
-        let body: Participant = serde_json::from_slice(&body)?;
+        let raw_body = to_bytes(response.into_body(), usize::MAX).await?;
+        let body: Participant = serde_json::from_slice(&raw_body)?;
         assert_eq!(body, create_args);
 
         Ok(())
@@ -153,8 +153,8 @@ mod tests {
 
         assert_eq!(response.status(), StatusCode::OK);
 
-        let body = hyper::body::to_bytes(response.into_body()).await?;
-        let body: Vec<(i32, String)> = serde_json::from_slice(&body)?;
+        let raw_body = to_bytes(response.into_body(), usize::MAX).await?;
+        let body: Vec<(i32, String)> = serde_json::from_slice(&raw_body)?;
         assert_eq!(body.len(), 2);
         assert_eq!(
             body,
@@ -206,8 +206,8 @@ mod tests {
 
         assert_eq!(response.status(), StatusCode::OK);
 
-        let body = hyper::body::to_bytes(response.into_body()).await?;
-        let body: Vec<Participant> = serde_json::from_slice(&body)?;
+        let raw_body = to_bytes(response.into_body(), usize::MAX).await?;
+        let body: Vec<Participant> = serde_json::from_slice(&raw_body)?;
         // idk if there's a better way to test that we get what we want
         assert_eq!(body.len(), 3);
 
@@ -226,8 +226,8 @@ mod tests {
 
         assert_eq!(response.status(), StatusCode::OK);
 
-        let body = hyper::body::to_bytes(response.into_body()).await?;
-        let body: Vec<Participant> = serde_json::from_slice(&body)?;
+        let raw_body = to_bytes(response.into_body(), usize::MAX).await?;
+        let body: Vec<Participant> = serde_json::from_slice(&raw_body)?;
         // idk if there's a better way to test that we get what we want
         assert_eq!(body.len(), 0);
 
@@ -250,8 +250,8 @@ mod tests {
 
         assert_eq!(response.status(), StatusCode::OK);
 
-        let body = hyper::body::to_bytes(response.into_body()).await?;
-        let body: Vec<Participant> = serde_json::from_slice(&body)?;
+        let raw_body = to_bytes(response.into_body(), usize::MAX).await?;
+        let body: Vec<Participant> = serde_json::from_slice(&raw_body)?;
         // idk if there's a better way to test that we get what we want
         assert_eq!(body.len(), 1);
 
@@ -274,8 +274,8 @@ mod tests {
 
         assert_eq!(response.status(), StatusCode::OK);
 
-        let body = hyper::body::to_bytes(response.into_body()).await?;
-        let body: Participant = serde_json::from_slice(&body)?;
+        let raw_body = to_bytes(response.into_body(), usize::MAX).await?;
+        let body: Participant = serde_json::from_slice(&raw_body)?;
         // idk if there's a better way to test this
         assert_eq!(body.name, "foo".to_string());
 

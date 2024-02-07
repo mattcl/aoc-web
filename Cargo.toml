@@ -1,6 +1,6 @@
 [package]
 name = "aoc-web"
-version = "0.2.0"
+version = "0.2.1"
 edition = "2021"
 rust-version = "1.74"
 
@@ -10,11 +10,12 @@ rust-version = "1.74"
 anyhow = "1"
 argon2 = "0.5.2"
 async-trait = "0.1.71"
-axum = { version = "0.6", features = ["headers", "macros"] }
+axum = { version = "0.7", features = ["macros"] }
+axum-extra = { version = "0.9.2", features = ["typed-header"] }
 clap = { version = "4.3", features = ["cargo", "derive", "env"] }
 figment = { version = "0.10.10", features = ["env", "toml"] }
 password-hash = { version = "0.5.0", features = ["alloc"] }
-sea-query = { version = "0.30.2", features = ["derive", "attr"] }
+sea-query = { version = "0.30.7", features = ["derive", "attr"] }
 sea-query-binder = { version = "0.5", features = ["sqlx-postgres", "with-uuid"] }
 serde = { version = "1.0.166", features = ["derive"] }
 serde_json = "1.0.100"
@@ -22,7 +23,7 @@ sqlx = { version = "0.7", features = ["runtime-tokio", "tls-rustls", "postgres",
 strum = { version = "0.25", features = ["derive"] }
 thiserror = "1.0.50"
 tokio = { version = "1.25", features = ["full"] }
-tower-http = { version = "0.4", features = ["cors", "trace"] }
+tower-http = { version = "0.5", features = ["cors", "trace"] }
 tracing = { version = "0.1.37", features = ["attributes"] }
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 url = { version = "2.4", features = ["serde"] }
@@ -34,7 +35,3 @@ mime = "0.3.17"
 mockall = "0.11.4"
 temp-env = "0.3.4"
 tower = { version = "0.4.13", features = ["util"] }
-
-[patch.crates-io]
-# until https://github.com/launchbadge/sqlx/pull/2545 makes it into a release
-sqlx-macros = { git = "https://github.com/launchbadge/sqlx.git", rev = "979a55da9d806385264af2bfee42030f081d564c" }

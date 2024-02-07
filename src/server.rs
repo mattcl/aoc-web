@@ -1,5 +1,6 @@
 use crate::{config, models::ModelManager, routes};
 use axum::{extract::FromRef, http::Method, Router};
+use tokio::net::TcpListener;
 use tower_http::cors::{Any, CorsLayer};
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
@@ -37,9 +38,9 @@ pub async fn serve() -> anyhow::Result<()> {
     let socket_addr = config().socket_addr();
     tracing::info!("listening on {}", &socket_addr);
 
-    axum::Server::bind(&socket_addr)
-        .serve(service(state).into_make_service())
-        .await?;
+    let listener = TcpListener::bind(socket_addr).await?;
+
+    axum::serve(listener, service(state).into_make_service()).await?;
 
     Ok(())
 }

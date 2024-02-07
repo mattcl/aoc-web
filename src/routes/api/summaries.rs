@@ -71,7 +71,7 @@ async fn get_summary(
 #[cfg(test)]
 mod tests {
     use axum::{
-        body::Body,
+        body::{to_bytes, Body},
         http::{self, Request, StatusCode},
     };
     use tower::ServiceExt;
@@ -92,8 +92,8 @@ mod tests {
 
         assert_eq!(response.status(), StatusCode::OK);
 
-        let body = hyper::body::to_bytes(response.into_body()).await?;
-        let body: Vec<Summary> = serde_json::from_slice(&body)?;
+        let raw_body = to_bytes(response.into_body(), usize::MAX).await?;
+        let body: Vec<Summary> = serde_json::from_slice(&raw_body)?;
         assert_eq!(body.len(), 0);
 
         // generate
@@ -121,8 +121,8 @@ mod tests {
 
         assert_eq!(response.status(), StatusCode::OK);
 
-        let body = hyper::body::to_bytes(response.into_body()).await?;
-        let body: Vec<Summary> = serde_json::from_slice(&body)?;
+        let raw_body = to_bytes(response.into_body(), usize::MAX).await?;
+        let body: Vec<Summary> = serde_json::from_slice(&raw_body)?;
         assert_eq!(body.len(), 2);
 
         Ok(())
@@ -176,8 +176,8 @@ mod tests {
 
         assert_eq!(response.status(), StatusCode::OK);
 
-        let body = hyper::body::to_bytes(response.into_body()).await?;
-        let body: Vec<Summary> = serde_json::from_slice(&body)?;
+        let raw_body = to_bytes(response.into_body(), usize::MAX).await?;
+        let body: Vec<Summary> = serde_json::from_slice(&raw_body)?;
         assert_eq!(body.len(), 2);
 
         Ok(())
@@ -194,8 +194,8 @@ mod tests {
 
         assert_eq!(response.status(), StatusCode::OK);
 
-        let body = hyper::body::to_bytes(response.into_body()).await?;
-        let body: Vec<Summary> = serde_json::from_slice(&body)?;
+        let raw_body = to_bytes(response.into_body(), usize::MAX).await?;
+        let body: Vec<Summary> = serde_json::from_slice(&raw_body)?;
         assert_eq!(body.len(), 0);
 
         Ok(())
@@ -217,8 +217,9 @@ mod tests {
 
         assert_eq!(response.status(), StatusCode::OK);
 
-        let body = hyper::body::to_bytes(response.into_body()).await?;
-        let body: Vec<Summary> = serde_json::from_slice(&body)?;
+        let raw_body = to_bytes(response.into_body(), usize::MAX).await?;
+
+        let body: Vec<Summary> = serde_json::from_slice(&raw_body)?;
         assert_eq!(body.len(), 1);
 
         Ok(())

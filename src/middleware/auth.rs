@@ -1,17 +1,15 @@
-use axum::{
+use axum::{body::Body, http::Request, middleware::Next, response::Response};
+use axum_extra::{
     headers::{authorization::Bearer, Authorization},
-    http::Request,
-    middleware::Next,
-    response::Response,
     TypedHeader,
 };
 
 use crate::{config, Error, Result};
 
-pub async fn mw_require_auth<B>(
+pub async fn mw_require_auth(
     bearer: Option<TypedHeader<Authorization<Bearer>>>,
-    req: Request<B>,
-    next: Next<B>,
+    req: Request<Body>,
+    next: Next,
 ) -> Result<Response> {
     tracing::debug!("authenticating");
     if let Some(bearer) = bearer {
