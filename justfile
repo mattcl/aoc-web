@@ -6,6 +6,10 @@ DATABASE_URL := "postgres://aoc:sandcastle@localhost/aoc"
 watch:
     DATABASE_URL="postgres://postgres:postgres@localhost/aoc" cargo watch -x test
 
+# run tests with coverage reporting
+coverage:
+    DATABASE_URL="postgres://postgres:postgres@localhost/aoc" cargo tarpaulin
+
 # build the docker images
 docker-build:
     docker build .
